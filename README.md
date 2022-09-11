@@ -19,7 +19,7 @@
 * /api/{boardId}/comment - post : 댓글 등록
 * /api/{boardId}/comment/{id} - post : 댓글 삭제
 
-## json body
+## 3. json body
 #### board
 <pre>
 {
