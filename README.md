@@ -9,7 +9,8 @@
 ## 2. api 설계
 #### board
 * /api/home - get(페이징파라미터 걸어주어야함) : 모든 게시글
-* /api/home - post : 게시글 등록
+* /api/post - get : 게시글 등록
+* /api/post - post : 게시글 등록
 * /api/{id} - get : 게시글 상세조회
 * /api/{id} - post : 게시글 수정(body에 id값 넣어야함)
 * /api/delete/{id} - post : 게시글 삭제
@@ -76,3 +77,10 @@ restFul api의 좋은 설계는 url이 다 같고 method만 달라지는것인�
 Long 타입을 json으로 넘길때에는 정수던 실수던 모두 number형식으로 넘기기 때문에
 (자바스크립트에도 당연하게도 정수 실수 구분없이 모두 number 형이다.)
 그냥 1 써주면되고 뒤에 L을 붙이지 않아도된다.
+
+로그인은 폼로그인이 아닌 자체로그인 시스템.
+
+{
+"email" : "yc4852@gmail.com",
+"password" : "1234"
+}

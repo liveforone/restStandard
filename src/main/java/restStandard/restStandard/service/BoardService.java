@@ -21,27 +21,34 @@ public class BoardService {
     private final CommentRepository commentRepository;
     private final CommentService commentService;
 
+    //== 전체 게시글 + 페이징 ==//
     @Transactional(readOnly = true)
     public Page<Board> getBoardList(Pageable pageable) {
         return boardRepository.findAll(pageable);
     }
 
+    //== 게시글 저장 ==//
     @Transactional
-    public void savePost(BoardDto boardDto) {
+    public void savePost(BoardDto boardDto, String writer) {
+        boardDto.setWriter(writer);
         boardRepository.save(boardDto.toEntity());
     }
 
+    //== 게시글 상세조회 ==//
     @Transactional(readOnly = true)
     public Board getBoard(Long id) {
         return boardRepository.findOneById(id);
     }
 
+    //== 게시글 수정 ==//
     @Transactional
-    public void editBoard(Long id, BoardDto boardDto) {
+    public void editBoard(Long id, BoardDto boardDto, String writer) {
         boardDto.setId(id);
+        boardDto.setWriter(writer);
         boardRepository.save(boardDto.toEntity());
     }
 
+    //== 게시글 삭제 - 자식인 댓글도 모두 삭제 ==//
     @Transactional
     public void deleteBoard(Long id) {
         boardRepository.deleteById(id);

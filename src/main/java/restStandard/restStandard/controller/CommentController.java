@@ -9,6 +9,7 @@ import restStandard.restStandard.domain.Comment;
 import restStandard.restStandard.dto.CommentDto;
 import restStandard.restStandard.service.CommentService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -18,24 +19,25 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    //== 전체 댓글 ==//
     @GetMapping("/api/{boardId}/comment")
-    public ResponseEntity<List<Comment>> commentHome(@PathVariable("boardId") Long boardId) {
+    public ResponseEntity<List<Comment>> commentHome(
+            @PathVariable("boardId") Long boardId
+    ) {
         List<Comment> commentList = commentService.getCommentList(boardId);
         return new ResponseEntity<>(commentList, HttpStatus.OK);
     }
 
+    //== 댓글 등록 ==//
     @PostMapping("/api/{boardId}/comment")
     public ResponseEntity<?> commentPost(
             @PathVariable("boardId") Long boardId,
-            @RequestBody CommentDto commentDto
+            @RequestBody CommentDto commentDto,
+            Principal principal
     ) {
-        commentService.saveComment(boardId, commentDto);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping("/api/{boardId}/comment/{id}")
-    public ResponseEntity<?> commentDelete(@PathVariable("id") Long id) {
-        commentService.deleteComment(id);
+        String user = principal.getName();
+        commentService.saveComment(boardId, commentDto, user);
+        log.info("Comment Posting Success!!");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
