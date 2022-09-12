@@ -49,7 +49,7 @@ public class BoardController {
         String writer = principal.getName();
 
         boardService.savePost(boardDto, writer);
-        log.info("Posting Success!!");
+        log.info("Posting Success With File!!");
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -68,6 +68,13 @@ public class BoardController {
         result.put("board", board);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    //== 게시글 좋아요 업데이트 ==//
+    @PostMapping("/api/good/{id}")
+    public ResponseEntity<?> updateBoardGood(@PathVariable("id") Long id) {
+        boardService.updateGood(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //== 게시글 수정 - 작성자가 같을때 ==//

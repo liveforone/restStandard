@@ -40,6 +40,12 @@ public class BoardService {
         return boardRepository.findOneById(id);
     }
 
+    //== 좋아요 업데이트 ==//
+    @Transactional
+    public void updateGood(Long id) {
+        boardRepository.updateGood(id);
+    }
+
     //== 게시글 수정 ==//
     @Transactional
     public void editBoard(Long id, BoardDto boardDto, String writer) {

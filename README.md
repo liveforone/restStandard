@@ -5,8 +5,17 @@
 * 유저-게시판-댓글 이 존재
 * 유저는 스프링시큐리티 라이브러리 사용.
 * 게시판과 댓글은 서로 부모 자식관계이며, 게시글 삭제시 엮여있는 댓글도 같이 삭제됨.
+* 회원가입은 기존의 방식과 같으나 로그인 기존의 form-login방식이 아닌 자체 로그인 방식으로 설계함
 
 ## 2. api 설계
+#### users
+* /user/signup - get
+* /user/signup - post
+* /user/login - get
+* /user/login - post
+* /user/login/result - get
+* /user/logout/result - get
+
 #### board
 * /api/home - get(페이징파라미터 걸어주어야함) : 모든 게시글
 * /api/post - get : 게시글 등록
@@ -21,6 +30,18 @@
 * /api/{boardId}/comment/{id} - post : 댓글 삭제
 
 ## 3. json body
+#### users
+<pre>
+{
+    "email" : "yc4852@gmail.com",
+    "password" : "1234"
+}
+
+{
+    "email" : "admin@restStandard.com",
+    "password" : "1234"
+}
+</pre>
 #### board
 <pre>
 {
@@ -58,29 +79,28 @@
 * 글 작성완료시 201(created)
 * 수정, 삭제시 200(ok)
 
-## 배운점
+## 4. 로그인
+* 로그인을 하게되면 dto와 세션을 넘긴다.
+* 이메일로 유저엔티티를 가져오고 usernamepasswordauthenticationtoken을 만들어 토큰을 발급한다.
+* 해당토큰을 시큐리티 컨텍스트홀더에 집어넣는다. 
+* 그리고 세션또한 set으로 컨텍스트홀더를 설정해준다. 
+* 가져온 엔티티의 auth와 이메일을 바탕으로 ADMIN 또는 MEMBER 를 확인하고 grantedauthority를 설정해준다.
+* userdetailsservice와 겹치는 부분도 존재하지만 일단은 모두다 작성하였다.
+* principal 과 같이 컨텍스트 홀더나 authentication을 사용하는것들은 모두 테스트 하였고 모두 성공적으로 사용가능했다.
+
+## 5. 배운점
 
 ### 1. 수정(거의 복습)
-jpa를 쓰기때문에 id값과 createdDate는 자동입력됨
-다만, 당연하게도 수정시에는 json에 id값 넣어주어야함.
-createdDate처럼 업데이트 하지 않을 필드는 @Column(updatable = false)을 걸어주면
-다시 값을 집어넣지않아도 수정시에 원래 값이 업데이트되지않고 남아있다.
+* jpa를 쓰기때문에 id값과 createdDate는 자동입력됨
+* 다만, 당연하게도 수정시에는 json에 id값 넣어주어야함.
+* createdDate처럼 업데이트 하지 않을 필드는 @Column(updatable = false)을 걸어주면됨.
 
-### 2. method에 따른 좋은 restful 설계 불가능
-restFul api의 좋은 설계는 url이 다 같고 method만 달라지는것인데,
-요즘은 메소드를 get과 post밖에 쓰지않는다.
-따라서 생성, 수정, 삭제 모두 같은 method, 같은 url을 사용하면 에러가 발생하게되면
-따라서 어떤 동작인지 메소드를 url에 기재해주면 해당 에러는 사라진다.
-결론적으로 get과 post만 쓰게되면 restful한 api를 설계하기 힘들다.
+### 2. json Long 타입 넘기기
+* Long 타입을 json으로 넘길때에는 정수던 실수던 모두 number형식으로 넘긴다.
+* (자바스크립트에도 당연하게도 정수 실수 구분없이 모두 number 형이다.)
+* 그냥 값을 써주면되고 자바처럼 뒤에 L을 붙이지 않아도된다.
 
-### 3. json Long 타입 넘기기
-Long 타입을 json으로 넘길때에는 정수던 실수던 모두 number형식으로 넘기기 때문에
-(자바스크립트에도 당연하게도 정수 실수 구분없이 모두 number 형이다.)
-그냥 1 써주면되고 뒤에 L을 붙이지 않아도된다.
-
-로그인은 폼로그인이 아닌 자체로그인 시스템.
-
-{
-"email" : "yc4852@gmail.com",
-"password" : "1234"
-}
+### 3. 다양한 값 넘기기
+* 넘겨야 하는 값이 한개가아니라 여러개(리스트말고)일때는 map을 사용하면 효과적이다.
+* 예를 들어 게시글을 수정/삭제시에는 principal.getname으로 현재 권한을 가지고 있는 주체를 넘겨서
+  게시글 작성자와 비교해주어야하는데, 이때 map을 사용해서 권한주체와 게시글을 map에 넣어 보내주면된다.
