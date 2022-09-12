@@ -11,6 +11,7 @@ import restStandard.restStandard.service.CommentService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,5 +40,24 @@ public class CommentController {
         commentService.saveComment(boardId, commentDto, user);
         log.info("Comment Posting Success!!");
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //== 댓글 삭제 ==//
+    @PostMapping("/api/{boardId}/comment/delete/{id}")
+    public ResponseEntity<?> deleteComment(
+            @PathVariable("id") Long id,
+            @RequestParam("user") String user,
+            Principal principal
+    ) {
+        String loginUser = principal.getName();
+
+        if (Objects.equals(user, loginUser)) {
+            commentService.deleteComment(id);
+            log.info("Comment Delete success!!");
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            log.info("Comment Delete Fail");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

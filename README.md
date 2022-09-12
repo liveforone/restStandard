@@ -7,7 +7,27 @@
 * 게시판과 댓글은 서로 부모 자식관계이며, 게시글 삭제시 엮여있는 댓글도 같이 삭제됨.
 * 회원가입은 기존의 방식과 같으나 로그인 기존의 form-login방식이 아닌 자체 로그인 방식으로 설계함
 
-## 2. api 설계
+## 2. 로그인 설계
+* 로그인을 하게되면 dto와 세션을 넘긴다.
+* 이메일로 유저엔티티를 가져오고 UsernamePasswordAuthenticationtoken을 만들어 토큰을 발급한다.
+* 해당토큰을 시큐리티 컨텍스트홀더에 집어넣는다.
+* 그리고 세션또한 set으로 컨텍스트홀더를 설정해준다.
+* 가져온 엔티티의 auth와 이메일을 바탕으로 ADMIN 또는 MEMBER 를 확인하고 GrantedAuthority를 설정해준다.
+* UserDetailsService와 겹치는 부분도 존재하지만 일단은 모두다 작성하였다.
+* principal 과 같이 컨텍스트 홀더나 Authentication을 사용하는것들은 모두 테스트 하였고 모두 성공적으로 사용가능했다.
+
+## 3. 게시글 수정/삭제 설계
+* 게시글 상세조회 시 현재 로그인한 유저 이름을 클라이언트로 전송한다.
+* 게시글 상세조회 시 게시글 수정/삭제가 가능한데,
+* 게시글 작성자와 현재 로그인 유저가 같을 경우 수정/삭제버튼을 띄운다.
+* 다를경우 수정/삭제버튼을 보이지 않게 처리한다.
+
+## 4. 댓글 삭제 설계
+* 댓글 삭제같은 경우 현재 로그인한 객체와 클라이언트로부터 받은 댓글 작성자를 비교한다.
+* 서로 같다면 댓글 삭제처리한다.
+* 다를 경우 bad resquest를 보낸다.
+
+## 5. api 설계
 #### users
 * /user/signup - get
 * /user/signup - post
@@ -27,9 +47,9 @@
 #### comment
 * /api/{boardId}/comment - get(페이징 없음) : 모든 댓글
 * /api/{boardId}/comment - post : 댓글 등록
-* /api/{boardId}/comment/{id} - post : 댓글 삭제
+* /api/{boardId}/comment/delete/{id} - post : 댓글 삭제
 
-## 3. json body
+## 6. json body
 #### users
 <pre>
 {
@@ -75,20 +95,11 @@
 }
 </pre>
 
-## 3. http status
+## 7. http status
 * 글 작성완료시 201(created)
 * 수정, 삭제시 200(ok)
 
-## 4. 로그인
-* 로그인을 하게되면 dto와 세션을 넘긴다.
-* 이메일로 유저엔티티를 가져오고 usernamepasswordauthenticationtoken을 만들어 토큰을 발급한다.
-* 해당토큰을 시큐리티 컨텍스트홀더에 집어넣는다. 
-* 그리고 세션또한 set으로 컨텍스트홀더를 설정해준다. 
-* 가져온 엔티티의 auth와 이메일을 바탕으로 ADMIN 또는 MEMBER 를 확인하고 grantedauthority를 설정해준다.
-* userdetailsservice와 겹치는 부분도 존재하지만 일단은 모두다 작성하였다.
-* principal 과 같이 컨텍스트 홀더나 authentication을 사용하는것들은 모두 테스트 하였고 모두 성공적으로 사용가능했다.
-
-## 5. 배운점
+## 8. 배운점
 
 ### 1. 수정(거의 복습)
 * jpa를 쓰기때문에 id값과 createdDate는 자동입력됨
