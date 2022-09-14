@@ -27,6 +27,12 @@ public class BoardService {
         return boardRepository.findAll(pageable);
     }
 
+    //== 전체 게시글 제목으로 검색 + 페이징 ==//
+    @Transactional(readOnly = true)
+    public Page<Board> getBoardListSearch(String keyword, Pageable pageable) {
+        return boardRepository.findByTitleContaining(keyword, pageable);
+    }
+
     //== 게시글 저장 ==//
     @Transactional
     public void savePost(BoardDto boardDto, String writer) {

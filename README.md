@@ -34,10 +34,12 @@
 * /user/login - get
 * /user/login - post
 * /user/login/result - get
+* /user/logout - post
 * /user/logout/result - get
 
 #### board
 * /api/home - get(페이징파라미터 걸어주어야함) : 모든 게시글
+* /api/home/search - get(페이징 파라미터 걸어주어야함, keyword 파라미터로 걸어주어야함.) :
 * /api/post - get : 게시글 등록
 * /api/post - post : 게시글 등록
 * /api/{id} - get : 게시글 상세조회
@@ -67,22 +69,19 @@
 {
     "content" : "first text",
     "good" : 1,
-    "title" : "test1",
-    "writer" : "chan"
+    "title" : "test1"
 }
 
 {
     "content" : "second text",
     "good" : 2,
-    "title" : "test2",
-    "writer" : "kim"
+    "title" : "test2"
 }
 
 {
     "content" : "third text",
     "good" : 3,
-    "title" : "test3",
-    "writer" : "park"
+    "title" : "test3"
 }
 </pre>
 

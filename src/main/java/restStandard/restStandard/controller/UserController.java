@@ -12,6 +12,7 @@ import restStandard.restStandard.dto.UserDto;
 import restStandard.restStandard.service.UserService;
 
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor

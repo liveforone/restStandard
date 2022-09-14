@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +29,28 @@ public class BoardController {
     //== 전체 게시글 + 페이징 ==//
     @GetMapping("/api/home")
     public ResponseEntity<Page<Board>> getBoardHome(
-            @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(page = 0, size = 10)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "good", direction = Sort.Direction.DESC),
+                    @SortDefault(sort = "id", direction = Sort.Direction.DESC)
+            }) Pageable pageable
     ) {
         Page<Board> boardList = boardService.getBoardList(pageable);
+
+        return new ResponseEntity<>(boardList, HttpStatus.OK);
+    }
+
+    //== 게시글 제목으로 검색 + 페이징 ==//
+    @GetMapping("/api/home/search")
+    public ResponseEntity<Page<Board>> searchBoard(
+            @PageableDefault(page = 0, size = 10)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "good", direction = Sort.Direction.DESC),
+                    @SortDefault(sort = "id", direction = Sort.Direction.DESC)
+            }) Pageable pageable,
+            @RequestParam("keyword") String keyword
+    ) {
+        Page<Board> boardList = boardService.getBoardListSearch(keyword, pageable);
 
         return new ResponseEntity<>(boardList, HttpStatus.OK);
     }
@@ -50,7 +70,7 @@ public class BoardController {
         String writer = principal.getName();
 
         boardService.savePost(boardDto, writer);
-        log.info("Posting Success With File!!");
+        log.info("Posting Success!!");
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
                 .logoutSuccessUrl("/user/logout/result")
-                .invalidateHttpSession(true)
+                .invalidateHttpSession(true)  //세션정보 제거
                 .and()
                 // 403 예외처리 핸들링
                 .exceptionHandling().accessDeniedPage("/user/prohibition");
